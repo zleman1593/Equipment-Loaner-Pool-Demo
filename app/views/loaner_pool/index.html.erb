@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+      <meta name="author" content="Zack Leman">
+      <title>Loaner Pool</title>
+      <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+   </head>
+   <body>
+      <!-- Navigation -->
+      <a id="menu-toggle" href="#" class="btn btn-dark btn-lg toggle">☰</a>
+      <nav id="sidebar-wrapper">
+         <ul class="sidebar-nav">
+            <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle">☰</a>
+            <li class="sidebar-brand">
+               <a href="#top">Equipment Loaner</a>
+            </li>
+            <li>
+               <a href="#addNew">Add New Items</a>
+            </li>
+            <li>
+               <a href="#students">Students</a>
+            </li>
+            <li>
+               <a href="#items"><strong>All Items</strong></a>
+            </li>
+            <% @allItems.each do |item|%>
+            <li>
+               <%= link_to item.name, '#'+item.shortName %>
+            </li>
+            <%end%> 
+         </ul>
+      </nav>
+      
+      <!-- Header -->
+      <header id="top" class="header">
+         <div class="text-vertical-center" id="firstText">
+            <h1>Equipment Loaner Pool</h1>
+            <h3>Platform to keep track of your IT loaner equipment</h3>
+            <br>
+            <a href="#items" class="btn btn-dark btn-lg">See Equipment</a>
+         </div>
+      </header>
+      
+      <section id="items">
+         <!-- Page Content -->
+         <div class="container">
+         <!-- Page Header -->
+         <div class="row">
+            <div class="col-lg-12">
+               <h1 class="page-header">Items</h1>
+            </div>
+         </div>
+         <!-- /.row -->
+         <!-- Items Row -->
+         <div class="row">
+            <% @allItems.each do |item|%>
+            <div id=<%=item.shortName%> class="col-md-4 portfolio-item">
+               <a href="">
+               <%=  image_tag item.image, :class =>"img-responsive" %>
+               </a>
+               <h3>
+                  <a href="#"><%= item.name%></a>
+               </h3>
+               <p><%= item.description%></p>
+               <p>There are <%= item.amountOut%> <%= item.name%>s checked out.</p>
+               <p>There are <%= item.amountAvalible%> <%= item.name%>s available to check out.</p>
+               <%= form_tag do%>
+               <label>Number to check out</label>
+               <p style="display:none;"><%= text_field_tag(:name, item.name)%> </p>
+               <p><%= text_field_tag(:amountToCheckOut,nil, class: 'form-control')%> </p>
+               <label>Student ID</label>
+               <p><%= text_field_tag(:studentId,nil, class: 'form-control')%> </p>
+               <p> <%= submit_tag "Check Out", class: "btn btn-default"%></p>
+               <%end%>
+            </div>
+            <% end%>
+         </div>
+         <p><strong>Note:</strong> To return items in to inventory. Simply put a + in front of the number  and click check out. This will return that number of items. Make sure to include the student ID</p>
+      </section>
+      
+   
+         <section id="students" class="services bg-primary">
+         	  
+            <div class="container">
+               <div class="row">
+                  <div class="col-lg-12">
+                     <h1 class="page-header">Students who have loaner Items </h1>
+                  </div>
+               </div>
+                <ul class="list-group">
+		               <% @allUsers.each do |user|%>
+		                <% if user.productArray.size != 0 %>
+		               <li class="list-group-item">
+		                 <strong> <p>ID: <%= user.userID%></p></strong>
+		                  <% user.productArray.each do |product|%>
+		                  <span class="badge"><%= product['numberOfItems'] %></span>
+		                  <p> <%= product['itemName'] %>s</p>
+		                  <% end%>
+		               </li>
+		                <% end%>
+		               <% end%>
+     			 </ul>
+     			 </div>			
+         </section>
+      
+      
+      <section id="addNew" class="services bg-primary">
+         <div class="container">
+            <div class="row text-center">
+               <h1>Add A New Item</h1>
+               <%= form_tag do%>
+               <div class="form-group">
+                  <label for="exampleInputEmail1">Name of Item</label>
+                  <p><%= text_field_tag(:name, nil, class: 'form-control')%></p>
+               </div>
+               <div class="form-group">
+                  <label>Description of Item</label>
+                  <p><%= text_field_tag(:description,nil, class: 'form-control')%></p>
+               </div>
+               <div class="form-group">
+                  <label>Number of items</label>
+                  <p><%= text_field_tag(:number,nil, class: 'form-control')%></p>
+               </div>
+               <div class="form-group">
+                  <label> URL for image</label>
+                  <p><%= text_field_tag(:website,nil, class: 'form-control')%></p>
+               </div>
+               <p> <%=  submit_tag "Add New Item", class: "btn btn-default"%> </p>
+               <%end%> 
+            </div>
+            <!-- /.row -->
+         </div>
+         <!-- /.container -->
+      </section>
+      
+      <!-- Footer -->
+      <footer>
+      </footer>
+      
+      
+     
+     
+      <script>
+         // Closes the sidebar menu
+         $("#menu-close").click(function(e) {
+             e.preventDefault();
+             $("#sidebar-wrapper").toggleClass("active");
+         });
+         
+         // Opens the sidebar menu
+         $("#menu-toggle").click(function(e) {
+             e.preventDefault();
+             $("#sidebar-wrapper").toggleClass("active");
+         });
+         
+         // Scrolls to the selected menu item on the page
+         $(function() {
+             $('a[href*=#]:not([href=#])').click(function() {
+                 if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') || location.hostname == this.hostname) {
+         
+                     var target = $(this.hash);
+                     target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                     if (target.length) {
+                         $('html,body').animate({
+                             scrollTop: target.offset().top
+                         }, 1000);
+                         return false;
+                     }
+                 }
+             });
+         });
+      </script>
+   </body>
+</html>
